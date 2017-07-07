@@ -17,59 +17,176 @@
 	FileInstall, ico_reboot.ico, ico_reboot.ico, 0
 	FileInstall, ico_HotKeys.ico, ico_HotKeys.ico, 0
 	FileInstall, ico_options.ico, ico_options.ico, 0
+	FileInstall, ico_lock.ico, ico_lock.ico, 0
 
 	SetEnv, title, AutoShutDown
 	SetEnv, mode, at a time
 	SetEnv, version, Version 2017-07-07
 	SetEnv, Author, LostByteSoft
 
-	; SetEnv, time, 0001		; go to ini var
-	IniRead, time, AutoShutDown.ini, options, time
-	;; msgbox, %time%		; for debug purpose
+	;; IniRead, time, AutoShutDown.ini, options, time	 ; removed
+
+	IniRead, sunday, AutoShutDown.ini, options, sunday
+	IniRead, monday, AutoShutDown.ini, options, monday
+	IniRead, tuesday, AutoShutDown.ini, options, tuesday
+	IniRead, wenesday, AutoShutDown.ini, options, wenesday
+	IniRead, thusday, AutoShutDown.ini, options, thusday
+	IniRead, friday, AutoShutDown.ini, options, friday
+	IniRead, saturday, AutoShutDown.ini, options, saturday
+
+	IniRead, sundayonoff, AutoShutDown.ini, options, sundayonoff
+	IniRead, mondayonoff, AutoShutDown.ini, options, mondayonoff
+	IniRead, tuesdayonoff, AutoShutDown.ini, options, tuesdayonoff
+	IniRead, wenesdayonoff, AutoShutDown.ini, options, wenesdayonoff
+	IniRead, thusdayonoff, AutoShutDown.ini, options, thusdayonoff
+	IniRead, fridayonoff, AutoShutDown.ini, options, fridayonoff
+	IniRead, saturdayonoff, AutoShutDown.ini, options, saturdayonoff
+
+	FormatTime, today_dddd, %today%, dddd
+
+	IfEqual, today_dddd, dimanche, SetEnv, time, %sunday%
+	IfEqual, today_dddd, sunday, SetEnv, time, %sunday%
+	IfEqual, today_dddd, lundi, SetEnv, time, %monday%
+	IfEqual, today_dddd, monday, SetEnv, time, %monday%
+	IfEqual, today_dddd, mardi, SetEnv, time, %tuesday%
+	IfEqual, today_dddd, tuesday, SetEnv, time, %tuesday%
+	IfEqual, today_dddd, mercredi, SetEnv, time, %wenesday%
+	IfEqual, today_dddd, wenesday, SetEnv, time, %wenesday%
+	IfEqual, today_dddd, jeudi, SetEnv, time, %thusday%
+	IfEqual, today_dddd, thusday, SetEnv, time, %thusday%
+	IfEqual, today_dddd, vendredi, SetEnv, time, %friday%
+	IfEqual, today_dddd, friday, SetEnv, time, %friday%
+	IfEqual, today_dddd, samedi, SetEnv, time, %saturday%
+	IfEqual, today_dddd, saturday, SetEnv, time, %saturday%
 
 ;;--- Menu Tray options ---
 
 	Menu, Tray, NoStandard
 	Menu, tray, add, --= %title% =--, about1
+	Menu, Tray, Icon,  --= %title% =--, ico_time.ico
 	Menu, tray, add,
 	Menu, tray, add, About %author%, about2			; about author
 	Menu, Tray, Icon, About %author%, ico_about.ico
 	Menu, tray, add, %Version%, version			; About version
 	Menu, Tray, Icon, %Version%, ico_about.ico
 	Menu, tray, add,
-	Menu, tray, add, Options AutoShutDown.ini, options			; About version
+	Menu, tray, add, Options AutoShutDown.ini, options
 	Menu, Tray, Icon, Options AutoShutDown.ini, ico_options.ico
+	Menu, tray, add, Time set = %time% H, about3
+	Menu, Tray, Icon, Time set = %time% H, ico_options.ico
+	Menu, tray, add, Secret MsgBox, secretmsgbox
+	Menu, Tray, Icon, Secret MsgBox, ico_lock.ico
 	Menu, tray, add,
 	Menu, tray, add, Exit %title%, ExitApp			; GuiClose exit program
 	Menu, Tray, Icon, Exit %title%, ico_shut.ico
 	Menu, tray, add, Refresh, doReload 			; Reload the script.
 	Menu, Tray, Icon, Refresh, ico_reboot.ico, 1
-	Menu, tray, add, Do It Now (Shutdown), shut
+	Menu, tray, add, Do It Now (Shutdown), Gui
 	Menu, Tray, Icon, Do It Now (Shutdown), ico_HotKeys.ico
 	Menu, Tray, Tip, %title% - Shut at %time% H
 
 ;;--- Software start here ---
 
-
 loop:
-	SetEnv, var, %A_HOUR%%A_MIN%
-	IfEqual, var, %time%, goto, shut
+
+	FormatTime, today_dddd, %today%, dddd
+	IfEqual, today_dddd, dimanche, goto, sunday
+	IfEqual, today_dddd, sunday, goto, sunday
+	IfEqual, today_dddd, lundi, goto, monday
+	IfEqual, today_dddd, monday, goto, monday
+	IfEqual, today_dddd, mardi, goto, tuesday
+	IfEqual, today_dddd, tuesday, goto, tuesday
+	IfEqual, today_dddd, mercredi, goto, wenesday
+	IfEqual, today_dddd, wenesday, goto, wenesday
+	IfEqual, today_dddd, vendredi, goto, friday
+	IfEqual, today_dddd, friday, goto, friday
+	IfEqual, today_dddd, samedi, goto, saturday
+	IfEqual, today_dddd, saturday, goto, saturday
 	Sleep, 55000
-	;; msgbox,0,Time,%A_HOUR%%A_MIN%	; for debug purpose
+	MsgBox, error detecting the day. Retry.
 	goto, loop
 
 
-shut:
-	Gui, Add, Text, x12 y10 w450 h100 , The computer will shutdown in 20 seconds. This message have a 10 seconds timeout. You can press "Cancel" to cancel it will cancel. Button "Do it now" shutdown now without any notifications. Button "ok" shutdown normally. %author% %title% %mode% %version%. The time set is %time%.
-	Gui, Add, Button, x12 y130 w110 h50 , Ok
-	Gui, Add, Button, x132 y130 w110 h50 , Do it now
-	Gui, Add, Button, x252 y130 w110 h50 , Cancel
+;;--- Days of the week ---
 
-	Gui, Show, x990 y435 h206 w479, AutoShutDown
+sunday:
+	SetEnv, today, sunday
+	SetEnv, var, %A_HOUR%%A_MIN%
+	IfEqual, var, %sunday%, goto, shut
+	Sleep, 55000
+	IfNotEqual, today, sunday, goto, loop
+	goto, sunday
+
+monday:
+	SetEnv, today, monday
+	SetEnv, var, %A_HOUR%%A_MIN%
+	IfEqual, var, %monday%, goto, shut
+	Sleep, 55000
+	IfNotEqual, today, monday, goto, loop
+	goto, monday
+
+tuesday:
+	SetEnv, today, tuesday
+	SetEnv, var, %A_HOUR%%A_MIN%
+	IfEqual, var, %tuesday%, goto, shut
+	Sleep, 55000
+	IfNotEqual, today, tuesday, goto, loop
+	goto, tuesday
+
+wenesday:
+	SetEnv, today, wenesday
+	SetEnv, var, %A_HOUR%%A_MIN%
+	IfEqual, var, %wenesday%, goto, shut
+	Sleep, 55000
+	IfNotEqual, today, wenesday, goto, loop
+	goto, wenesday
+
+thusday:
+	SetEnv, today, thusday
+	SetEnv, var, %A_HOUR%%A_MIN%
+	IfEqual, var, %thusday%, goto, shut
+	Sleep, 55000
+	IfNotEqual, today, thusday, goto, loop
+	goto, thusday
+
+friday:
+	SetEnv, today, friday
+	SetEnv, var, %A_HOUR%%A_MIN%
+	IfEqual, var, %friday%, goto, shut
+	Sleep, 55000
+	IfNotEqual, today, friday, goto, loop
+	goto, friday
+
+saturday:
+	SetEnv, today, saturday
+	SetEnv, var, %A_HOUR%%A_MIN%
+	IfEqual, var, %saturday%, goto, shut
+	Sleep, 55000
+	IfNotEqual, today, saturday, goto, loop
+	goto, saturday
+
+;;--- Shutdown ---
+
+shut:
+	IfEqual, sundayonoff, 0, goto, loop
+	IfEqual, mondayonoff, 0, goto, loop
+	IfEqual, tuesdayonoff, 0, goto, loop
+	IfEqual, wenesdayonoff, 0, goto, loop
+	IfEqual, thusdayonoff, 0, goto, loop
+	IfEqual, fridayonoff, 0, goto, loop
+	IfEqual, saturdayonoff, 0, goto, loop
+
+Gui:
+	Gui, Add, Text, x12 y10 w450 h100 , The computer will shutdown in 20 seconds. This message have a 10 seconds timeout. `n`nYou can press "Cancel" to cancel it will cancel. Button "Do it now" shutdown now without any notifications. Button "ok" shutdown normally.`n`n%author% %title% %mode% %version%. The time set is %time%.
+	Gui, Add, Button, x75 y100 w110 h50 , Ok
+	Gui, Add, Button, x200 y100 w110 h50 , Do it now
+	Gui, Add, Button, x325 y100 w110 h50 , Cancel
+	Gui, Show, x990 y435 h175 w500, AutoShutDown
 	SetTimer, Splash, 10000
 	Return
 
 	ButtonOk:
+		Gui, destroy
 		Goto, Splash
 
 	ButtonDoitnow:
@@ -81,7 +198,6 @@ shut:
 		goto, doReload
 
 	Splash:
-	Gui, destroy
 	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 10
 	sleep, 1000
 	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 9
@@ -104,6 +220,8 @@ shut:
 	sleep, 1000
 	SplashTextOff
 
+;;--- Shutdown ---
+
 	Shutdown:
 	;; MsgBox, IS SHUTDOWN 	;; for debug purpose
 	Shutdown, 5
@@ -123,6 +241,7 @@ options:
 
 about1:
 about2:
+about3:
 	TrayTip, %title%, ShutDown at time %Author%, 2, 2
 	Return
 
@@ -133,6 +252,10 @@ Version:
 doReload:
 	Reload
 	Exitapp
+
+secretmsgbox:
+	MsgBox, a_hour=%a_hour% - A_MIN=%A_MIN% - today_dddd=%today_dddd% - time=%time% - sunday=%sunday% - monday=%monday% - tuesday=%tuesday% - wenesday=%wenesday% - thusday=%thusday% - friday=%friday% - saturday=%saturday% - sundayonoff=%sundayonoff% - mondayonoff=%mondayonoff% - tuesdayonoff=%tuesdayonoff% - wenesdayonoff=%wenesdayonoff% - thusdayonoff=%thusdayonoff% - fridayonoff=%fridayonoff% - saturdayonoff=%saturdayonoff%
+	Return
 
 ;;--- End of script ---
 ;
