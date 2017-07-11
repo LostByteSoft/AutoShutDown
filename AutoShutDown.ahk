@@ -21,7 +21,7 @@
 
 	SetEnv, title, AutoShutDown
 	SetEnv, mode, at a time
-	SetEnv, version, Version 2017-07-07
+	SetEnv, version, Version 2017-07-10
 	SetEnv, Author, LostByteSoft
 
 	;; IniRead, time, AutoShutDown.ini, options, time	 ; removed
@@ -76,6 +76,8 @@
 	Menu, Tray, Icon, Time set = %time% H, ico_options.ico
 	Menu, tray, add, Secret MsgBox, secretmsgbox
 	Menu, Tray, Icon, Secret MsgBox, ico_lock.ico
+	Menu, tray, add, Show Gui, gui
+	; Menu, Tray, Icon, Show Gui,
 	Menu, tray, add,
 	Menu, tray, add, Exit %title%, ExitApp			; GuiClose exit program
 	Menu, Tray, Icon, Exit %title%, ico_shut.ico
@@ -112,90 +114,124 @@ loop:
 sunday:
 	SetEnv, today, sunday
 	SetEnv, var, %A_HOUR%%A_MIN%
-	IfEqual, var, %sunday%, goto, shut
+	IfEqual, var, %sunday%, goto, shutsun
 	Sleep, 55000
 	IfNotEqual, today, sunday, goto, loop
 	goto, sunday
 
+	shutsun:
+	IfEqual, sundayonoff, 0, goto, loop
+	Sleep, 55000
+	Goto, gui
+
 monday:
 	SetEnv, today, monday
 	SetEnv, var, %A_HOUR%%A_MIN%
-	IfEqual, var, %monday%, goto, shut
+	IfEqual, var, %monday%, goto, shutmon
 	Sleep, 55000
 	IfNotEqual, today, monday, goto, loop
 	goto, monday
 
+	shutmon:
+	IfEqual, mondayonoff, 0, goto, loop
+	Sleep, 55000
+	Goto, gui
+
 tuesday:
 	SetEnv, today, tuesday
 	SetEnv, var, %A_HOUR%%A_MIN%
-	IfEqual, var, %tuesday%, goto, shut
+	IfEqual, var, %tuesday%, goto, shuttue
 	Sleep, 55000
 	IfNotEqual, today, tuesday, goto, loop
 	goto, tuesday
 
+	shuttue:
+	IfEqual, tuesdayonoff, 0, goto, loop
+	Sleep, 55000
+	Goto, gui
+
 wenesday:
 	SetEnv, today, wenesday
 	SetEnv, var, %A_HOUR%%A_MIN%
-	IfEqual, var, %wenesday%, goto, shut
+	IfEqual, var, %wenesday%, goto, shutwen
 	Sleep, 55000
 	IfNotEqual, today, wenesday, goto, loop
 	goto, wenesday
 
+	shutwen:
+	IfEqual, wenesdayonoff, 0, goto, loop
+	Sleep, 55000
+	Goto, gui
+
 thusday:
 	SetEnv, today, thusday
 	SetEnv, var, %A_HOUR%%A_MIN%
-	IfEqual, var, %thusday%, goto, shut
+	IfEqual, var, %thusday%, goto, shutthu
 	Sleep, 55000
 	IfNotEqual, today, thusday, goto, loop
 	goto, thusday
 
+	shutthu:
+	IfEqual, wenesdayonoff, 0, goto, loop
+	Sleep, 55000
+	Goto, gui
+
 friday:
 	SetEnv, today, friday
 	SetEnv, var, %A_HOUR%%A_MIN%
-	IfEqual, var, %friday%, goto, shut
+	IfEqual, var, %friday%, goto, shutfri
 	Sleep, 55000
 	IfNotEqual, today, friday, goto, loop
 	goto, friday
 
+	shutfri:
+	IfEqual, fridayonoff, 0, goto, loop
+	Sleep, 55000
+	Goto, gui
+
 saturday:
 	SetEnv, today, saturday
 	SetEnv, var, %A_HOUR%%A_MIN%
-	IfEqual, var, %saturday%, goto, shut
+	IfEqual, var, %saturday%, goto, shutsat
 	Sleep, 55000
 	IfNotEqual, today, saturday, goto, loop
 	goto, saturday
 
+	shutsat:
+	IfEqual, saturdayonoff, 0, goto, loop
+	Sleep, 55000
+	Goto, gui
+
 ;;--- Shutdown ---
 
-shut:
-	IfEqual, sundayonoff, 0, goto, loop
-	IfEqual, mondayonoff, 0, goto, loop
-	IfEqual, tuesdayonoff, 0, goto, loop
-	IfEqual, wenesdayonoff, 0, goto, loop
-	IfEqual, thusdayonoff, 0, goto, loop
-	IfEqual, fridayonoff, 0, goto, loop
-	IfEqual, saturdayonoff, 0, goto, loop
-
 Gui:
-	Gui, Add, Text, x12 y10 w450 h100 , The computer will shutdown in 20 seconds. This message have a 10 seconds timeout. `n`nYou can press "Cancel" to cancel it will cancel. Button "Do it now" shutdown now without any notifications. Button "ok" shutdown normally.`n`n%author% %title% %mode% %version%. The time set is %time%.
-	Gui, Add, Button, x75 y100 w110 h50 , Ok
-	Gui, Add, Button, x200 y100 w110 h50 , Do it now
-	Gui, Add, Button, x325 y100 w110 h50 , Cancel
-	Gui, Show, x990 y435 h175 w500, AutoShutDown
-	SetTimer, Splash, 10000
-	Return
+	MsgBox , 33, Auto Shut Down, The computer will shutdown in 20 seconds. This message have a 10 seconds timeout. `n`nYou can press "Cancel" to cancel. Button "ok" shutdown normally.`n`n%author% %title% %mode% %version%. The time set is %time%., 10
+	if ErrorLevel, goto, loop
+	IfMsgBox, TIMEOUT, goto, splash
+	IfMsgBox, Ok, goto, splash
+	IfMsgBox, Cancel, goto, doReload
+	IfMsgBox, Annuler, goto, doReload
+	goto, doReload
 
-	ButtonOk:
-		Gui, destroy
-		Goto, Splash
+	;Gui, Add, Text, x12 y10 w450 h100 , The computer will shutdown in 20 seconds. This message have a 10 seconds timeout. `n`nYou can press "Cancel" to cancel it will cancel. Button "Do it now" shutdown now without any notifications. Button "ok" shutdown normally.`n`n%author% %title% %mode% %version%. The time set is %time%.
+	;Gui, Add, Button, x75 y100 w110 h50 , Ok
+	;Gui, Add, Button, x200 y100 w110 h50 , Do it now
+	;Gui, Add, Button, x325 y100 w110 h50 , Cancel
+	;Gui, Show, x990 y435 h175 w500, AutoShutDownGui
+	;SetTimer, Splash, 10000
+	;Return
+	;ButtonOk:
+	;	Gui, destroy
+	;	Goto, Splash
+	;ButtonDoitnow:
+	;	Gui, destroy
+	;	Goto, Splash
+	;ButtonCancel:
+	;	Gui, destroy
+	;	Sleep, 120000
+	;	goto, doReload
 
-	ButtonDoitnow:
-		Gui, destroy
-		Goto, Shutdown
-
-	ButtonCancel:
-		Gui, destroy
-		goto, doReload
+;;--- Shutdown ---
 
 	Splash:
 	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 10
@@ -219,11 +255,7 @@ Gui:
 	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 1
 	sleep, 1000
 	SplashTextOff
-
-;;--- Shutdown ---
-
-	Shutdown:
-	;; MsgBox, IS SHUTDOWN 	;; for debug purpose
+	;; MsgBox, IS SHUTDOWN 		;; for debug purpose
 	Shutdown, 5
 	goto, Exitapp
 
