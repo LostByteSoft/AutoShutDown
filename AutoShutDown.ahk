@@ -18,13 +18,13 @@
 	FileInstall, ico_HotKeys.ico, ico_HotKeys.ico, 0
 	FileInstall, ico_options.ico, ico_options.ico, 0
 	FileInstall, ico_lock.ico, ico_lock.ico, 0
+	FileInstall, ico_time_w.ico, ico_time_w.ico, 0
+	FileInstall, ico_gui.ico, ico_gui.ico, 0
 
 	SetEnv, title, AutoShutDown
 	SetEnv, mode, at a time
 	SetEnv, version, Version 2017-07-13
 	SetEnv, Author, LostByteSoft
-
-	;; IniRead, time, AutoShutDown.ini, options, time	 ; removed
 
 	IniRead, sunday, AutoShutDown.ini, options, sunday
 	IniRead, monday, AutoShutDown.ini, options, monday
@@ -43,7 +43,6 @@
 	IniRead, saturdayonoff, AutoShutDown.ini, options, saturdayonoff
 
 	FormatTime, today_dddd, %today%, dddd
-
 	IfEqual, today_dddd, dimanche, SetEnv, time, %sunday%
 	IfEqual, today_dddd, sunday, SetEnv, time, %sunday%
 	IfEqual, today_dddd, lundi, SetEnv, time, %monday%
@@ -64,6 +63,10 @@
 	Menu, Tray, NoStandard
 	Menu, tray, add, --= %title% =--, about1
 	Menu, Tray, Icon,  --= %title% =--, ico_time.ico
+	Menu, tray, add, Exit %title%, ExitApp			; GuiClose exit program
+	Menu, Tray, Icon, Exit %title%, ico_shut.ico
+	Menu, tray, add, Refresh, doReload 			; Reload the script.
+	Menu, Tray, Icon, Refresh, ico_reboot.ico, 1
 	Menu, tray, add,
 	Menu, tray, add, About %author%, about2			; about author
 	Menu, Tray, Icon, About %author%, ico_about.ico
@@ -72,22 +75,18 @@
 	Menu, tray, add,
 	Menu, tray, add, Options AutoShutDown.ini, options
 	Menu, Tray, Icon, Options AutoShutDown.ini, ico_options.ico
-	Menu, tray, add, Time set = %time% H, about3
-	Menu, Tray, Icon, Time set = %time% H, ico_options.ico
 	Menu, tray, add, Secret MsgBox, secretmsgbox
 	Menu, Tray, Icon, Secret MsgBox, ico_lock.ico
 	Menu, tray, add, Show Gui, gui
-	; Menu, Tray, Icon, Show Gui,
+	Menu, Tray, Icon, Show Gui, ico_gui.ico
 	Menu, tray, add,
-	Menu, tray, add, Exit %title%, ExitApp			; GuiClose exit program
-	Menu, Tray, Icon, Exit %title%, ico_shut.ico
-	Menu, tray, add, Refresh, doReload 			; Reload the script.
-	Menu, Tray, Icon, Refresh, ico_reboot.ico, 1
 	Menu, tray, add, Do It Now (Shutdown), Gui
 	Menu, Tray, Icon, Do It Now (Shutdown), ico_HotKeys.ico
 	Menu, Tray, Tip, %title% - Shut at %time% H
 
 ;;--- Software start here ---
+
+	Menu, Tray, Icon, ico_time_w.ico
 
 loop:
 	Sleep, 5000
@@ -258,6 +257,7 @@ options:
 about1:
 about2:
 about3:
+about4:
 	TrayTip, %title%, ShutDown at time %Author%, 2, 2
 	Return
 
