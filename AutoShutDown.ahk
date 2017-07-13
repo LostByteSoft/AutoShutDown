@@ -21,7 +21,7 @@
 
 	SetEnv, title, AutoShutDown
 	SetEnv, mode, at a time
-	SetEnv, version, Version 2017-07-10
+	SetEnv, version, Version 2017-07-13
 	SetEnv, Author, LostByteSoft
 
 	;; IniRead, time, AutoShutDown.ini, options, time	 ; removed
@@ -90,8 +90,9 @@
 ;;--- Software start here ---
 
 loop:
-
+	Sleep, 5000
 	FormatTime, today_dddd, %today%, dddd
+	Sleep, 5000
 	IfEqual, today_dddd, dimanche, goto, sunday
 	IfEqual, today_dddd, sunday, goto, sunday
 	IfEqual, today_dddd, lundi, goto, monday
@@ -100,14 +101,15 @@ loop:
 	IfEqual, today_dddd, tuesday, goto, tuesday
 	IfEqual, today_dddd, mercredi, goto, wenesday
 	IfEqual, today_dddd, wenesday, goto, wenesday
+	IfEqual, today_dddd, thusday, goto, thusday
+	IfEqual, today_dddd, jeudi, goto, thusday
 	IfEqual, today_dddd, vendredi, goto, friday
 	IfEqual, today_dddd, friday, goto, friday
 	IfEqual, today_dddd, samedi, goto, saturday
 	IfEqual, today_dddd, saturday, goto, saturday
-	Sleep, 55000
-	MsgBox, error detecting the day. Retry.
+	Sleep, 5000
+	MsgBox, error detecting the day. Retry ?
 	goto, loop
-
 
 ;;--- Days of the week ---
 
@@ -212,24 +214,6 @@ Gui:
 	IfMsgBox, Cancel, goto, doReload
 	IfMsgBox, Annuler, goto, doReload
 	goto, doReload
-
-	;Gui, Add, Text, x12 y10 w450 h100 , The computer will shutdown in 20 seconds. This message have a 10 seconds timeout. `n`nYou can press "Cancel" to cancel it will cancel. Button "Do it now" shutdown now without any notifications. Button "ok" shutdown normally.`n`n%author% %title% %mode% %version%. The time set is %time%.
-	;Gui, Add, Button, x75 y100 w110 h50 , Ok
-	;Gui, Add, Button, x200 y100 w110 h50 , Do it now
-	;Gui, Add, Button, x325 y100 w110 h50 , Cancel
-	;Gui, Show, x990 y435 h175 w500, AutoShutDownGui
-	;SetTimer, Splash, 10000
-	;Return
-	;ButtonOk:
-	;	Gui, destroy
-	;	Goto, Splash
-	;ButtonDoitnow:
-	;	Gui, destroy
-	;	Goto, Splash
-	;ButtonCancel:
-	;	Gui, destroy
-	;	Sleep, 120000
-	;	goto, doReload
 
 ;;--- Shutdown ---
 
