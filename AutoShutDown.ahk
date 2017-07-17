@@ -23,7 +23,7 @@
 
 	SetEnv, title, AutoShutDown
 	SetEnv, mode, at a time
-	SetEnv, version, Version 2017-07-13
+	SetEnv, version, Version 2017-07-16
 	SetEnv, Author, LostByteSoft
 
 	IniRead, sunday, AutoShutDown.ini, options, sunday
@@ -77,7 +77,7 @@
 	Menu, Tray, Icon, Options AutoShutDown.ini, ico_options.ico
 	Menu, tray, add, Secret MsgBox, secretmsgbox
 	Menu, Tray, Icon, Secret MsgBox, ico_lock.ico
-	Menu, tray, add, Show Gui, gui
+	Menu, tray, add, Show Gui, gui2
 	Menu, Tray, Icon, Show Gui, ico_gui.ico
 	Menu, tray, add,
 	Menu, tray, add, Do It Now (Shutdown), Gui
@@ -206,9 +206,17 @@ saturday:
 ;;--- Shutdown ---
 
 Gui:
-	MsgBox , 33, Auto Shut Down, The computer will shutdown in 20 seconds. This message have a 10 seconds timeout. `n`nYou can press "Cancel" to cancel. Button "ok" shutdown normally.`n`n%author% %title% %mode% %version%. The time set is %time%., 10
+	MsgBox , 33, Auto Shut Down, The computer will shutdown in 20 seconds. This message have a 10 seconds timeout.`n`nYou can press "Cancel" to cancel. Button "ok" shutdown normally.`n`n%author% %title% %mode% %version%.`n`nThe time set is %time%., 10
 	if ErrorLevel, goto, loop
 	IfMsgBox, TIMEOUT, goto, splash
+	IfMsgBox, Ok, goto, splash
+	IfMsgBox, Cancel, goto, doReload
+	IfMsgBox, Annuler, goto, doReload
+	goto, doReload
+
+Gui2:
+	MsgBox , 33, Auto Shut Down, The computer will shutdown in 10 seconds if you press OK.`n`nYou can press "Cancel" to cancel. Button "ok" shutdown normally.`n`n%author% %title% %mode% %version%.`n`nThe time set is %time%.
+	if ErrorLevel, goto, loop
 	IfMsgBox, Ok, goto, splash
 	IfMsgBox, Cancel, goto, doReload
 	IfMsgBox, Annuler, goto, doReload
@@ -270,7 +278,7 @@ doReload:
 	Exitapp
 
 secretmsgbox:
-	MsgBox, a_hour=%a_hour% - A_MIN=%A_MIN% - today_dddd=%today_dddd% - time=%time% - sunday=%sunday% - monday=%monday% - tuesday=%tuesday% - wenesday=%wenesday% - thusday=%thusday% - friday=%friday% - saturday=%saturday% - sundayonoff=%sundayonoff% - mondayonoff=%mondayonoff% - tuesdayonoff=%tuesdayonoff% - wenesdayonoff=%wenesdayonoff% - thusdayonoff=%thusdayonoff% - fridayonoff=%fridayonoff% - saturdayonoff=%saturdayonoff%
+	MsgBox, a_hour=%a_hour% - A_MIN=%A_MIN% - today_dddd=%today_dddd% - time=%time% - sunday=%sunday% - monday=%monday% - tuesday=%tuesday% - wenesday=%wenesday% - thusday=%thusday% - friday=%friday% - saturday=%saturday% - sundayonoff=%sundayonoff% - mondayonoff=%mondayonoff% - tuesdayonoff=%tuesdayonoff% - wenesdayonoff=%wenesdayonoff% - thusdayonoff=%thusdayonoff% - fridayonoff=%fridayonoff% - saturdayonoff=%saturdayonoff%`n`n Now is: %a_hour%%A_MIN% %today_dddd% is set to shut %time%.
 	Return
 
 ;;--- End of script ---
@@ -293,7 +301,9 @@ secretmsgbox:
 ;      The warranty is included in your anus. Look carefully you
 ;             might miss all theses small characters.
 ;
-;	As is customary and in compliance with current global and
+;	        Here is no fucking small carachter at all.
+;
+;	   As is customary and in compliance with current global and
 ;	interplanetary regulations, the author of these pages disclaims
 ;	all liability for the consequences of the advice given here,
 ;	in particular in the event of partial or total destruction of
