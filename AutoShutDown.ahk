@@ -11,6 +11,7 @@
 	#Persistent
 	#NoEnv
 
+	FileInstall, AutoShutDown.ini, AutoShutDown.ini, 0
 	FileInstall, ico_time.ico, ico_time.ico, 0
 	FileInstall, ico_about.ico, ico_about.ico, 0
 	FileInstall, ico_shut.ico, ico_shut.ico, 0
@@ -23,7 +24,7 @@
 
 	SetEnv, title, AutoShutDown
 	SetEnv, mode, at a time
-	SetEnv, version, Version 2017-07-16
+	SetEnv, version, Version 2017-07-21
 	SetEnv, Author, LostByteSoft
 
 	IniRead, sunday, AutoShutDown.ini, options, sunday
