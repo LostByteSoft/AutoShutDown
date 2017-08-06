@@ -24,7 +24,7 @@
 
 	SetEnv, title, AutoShutDown
 	SetEnv, mode, at a time
-	SetEnv, version, Version 2017-07-21
+	SetEnv, version, Version 2017-08-06-1755
 	SetEnv, Author, LostByteSoft
 
 	IniRead, sunday, AutoShutDown.ini, options, sunday
@@ -64,10 +64,14 @@
 	Menu, Tray, NoStandard
 	Menu, tray, add, --= %title% =--, about1
 	Menu, Tray, Icon,  --= %title% =--, ico_time.ico
+	Menu, tray, add,
 	Menu, tray, add, Exit %title%, ExitApp			; GuiClose exit program
 	Menu, Tray, Icon, Exit %title%, ico_shut.ico
-	Menu, tray, add, Refresh, doReload 			; Reload the script.
-	Menu, Tray, Icon, Refresh, ico_reboot.ico, 1
+	Menu, tray, add, Refresh (ini mod), doReload 			; Reload the script.
+	Menu, Tray, Icon, Refresh (ini mod), ico_reboot.ico, 1
+	Menu, tray, add, Show logo, GuiLogo
+	Menu, tray, add, Secret MsgBox, secretmsgbox
+	Menu, Tray, Icon, Secret MsgBox, ico_lock.ico
 	Menu, tray, add,
 	Menu, tray, add, About %author%, about2			; about author
 	Menu, Tray, Icon, About %author%, ico_about.ico
@@ -76,8 +80,6 @@
 	Menu, tray, add,
 	Menu, tray, add, Options AutoShutDown.ini, options
 	Menu, Tray, Icon, Options AutoShutDown.ini, ico_options.ico
-	Menu, tray, add, Secret MsgBox, secretmsgbox
-	Menu, Tray, Icon, Secret MsgBox, ico_lock.ico
 	Menu, tray, add, Show Gui, gui2
 	Menu, Tray, Icon, Show Gui, ico_gui.ico
 	Menu, tray, add,
@@ -281,6 +283,12 @@ doReload:
 secretmsgbox:
 	MsgBox, a_hour=%a_hour% - A_MIN=%A_MIN% - today_dddd=%today_dddd% - time=%time% - sunday=%sunday% - monday=%monday% - tuesday=%tuesday% - wenesday=%wenesday% - thusday=%thusday% - friday=%friday% - saturday=%saturday% - sundayonoff=%sundayonoff% - mondayonoff=%mondayonoff% - tuesdayonoff=%tuesdayonoff% - wenesdayonoff=%wenesdayonoff% - thusdayonoff=%thusdayonoff% - fridayonoff=%fridayonoff% - saturdayonoff=%saturdayonoff%`n`n Now is: %a_hour%%A_MIN% %today_dddd% is set to shut %time%.
 	Return
+
+GuiLogo:
+	Gui, Add, Picture, x25 y25 w200 h200 , ico_time.ico
+	Gui, Show, w250 h250, %title% Logo
+	Gui, Color, 000000
+	goto, loop
 
 ;;--- End of script ---
 ;
