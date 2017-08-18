@@ -6,10 +6,15 @@
 
 ;;--- Softwares var options files ---
 
-	SetWorkingDir, %A_ScriptDir%
+	#NoEnv
 	#SingleInstance Force
 	#Persistent
-	#NoEnv
+	SetWorkingDir, %A_ScriptDir%
+
+	SetEnv, title, AutoShutDown
+	SetEnv, mode, at a time
+	SetEnv, version, Version 2017-08-18-1242
+	SetEnv, Author, LostByteSoft
 
 	FileInstall, AutoShutDown.ini, AutoShutDown.ini, 0
 	FileInstall, ico_time.ico, ico_time.ico, 0
@@ -21,11 +26,6 @@
 	FileInstall, ico_lock.ico, ico_lock.ico, 0
 	FileInstall, ico_time_w.ico, ico_time_w.ico, 0
 	FileInstall, ico_gui.ico, ico_gui.ico, 0
-
-	SetEnv, title, AutoShutDown
-	SetEnv, mode, at a time
-	SetEnv, version, Version 2017-08-06-1755
-	SetEnv, Author, LostByteSoft
 
 	IniRead, sunday, AutoShutDown.ini, options, sunday
 	IniRead, monday, AutoShutDown.ini, options, monday
@@ -64,6 +64,7 @@
 	Menu, Tray, NoStandard
 	Menu, tray, add, --= %title% =--, about1
 	Menu, Tray, Icon,  --= %title% =--, ico_time.ico
+	Menu, tray, add, Show logo, GuiLogo
 	Menu, tray, add,
 	Menu, tray, add, Exit %title%, ExitApp			; GuiClose exit program
 	Menu, Tray, Icon, Exit %title%, ico_shut.ico
@@ -78,20 +79,27 @@
 	Menu, tray, add, %Version%, version			; About version
 	Menu, Tray, Icon, %Version%, ico_about.ico
 	Menu, tray, add,
-	Menu, tray, add, Options AutoShutDown.ini, options
-	Menu, Tray, Icon, Options AutoShutDown.ini, ico_options.ico
-	Menu, tray, add, Show Gui, gui2
-	Menu, Tray, Icon, Show Gui, ico_gui.ico
+	Menu, tray, add, Reboot PC, Reboot
+	Menu, Tray, Icon, Reboot PC, ico_reboot.ico, 1
+	Menu, tray, add, Session Close, Sessionpc
+	Menu, Tray, Icon, Session Close, Ico_Session.ico, 1
+	Menu, tray, add, Sleep PC, Sleeppc
+	Menu, Tray, Icon, Sleep PC, ico_veille.ico, 1
 	Menu, tray, add,
 	Menu, tray, add, Do It Now (Shutdown), Gui
 	Menu, Tray, Icon, Do It Now (Shutdown), ico_HotKeys.ico
+	Menu, tray, add,
+	Menu, tray, add, Options AutoShutDown.ini, options
+	Menu, Tray, Icon, Options AutoShutDown.ini, ico_options.ico
+	Menu, tray, add, Show Gui, Gui2
+	Menu, Tray, Icon, Show Gui, ico_gui.ico
+	Menu, tray, add,
 	Menu, Tray, Tip, %title% - Shut at %time% H
 
 ;;--- Software start here ---
 
-	Menu, Tray, Icon, ico_time_w.ico
-
 loop:
+	Menu, Tray, Icon, ico_time_w.ico
 	Sleep, 5000
 	FormatTime, today_dddd, %today%, dddd
 	Sleep, 5000
@@ -209,51 +217,79 @@ saturday:
 ;;--- Shutdown ---
 
 Gui:
+	Menu, Tray, Icon, ico_time.ico
 	MsgBox , 33, Auto Shut Down, The computer will shutdown in 20 seconds. This message have a 10 seconds timeout.`n`nYou can press "Cancel" to cancel. Button "ok" shutdown normally.`n`n%author% %title% %mode% %version%.`n`nThe time set is %time%., 10
-	if ErrorLevel, goto, loop
+		if ErrorLevel, goto, loop
 	IfMsgBox, TIMEOUT, goto, splash
 	IfMsgBox, Ok, goto, splash
-	IfMsgBox, Cancel, goto, doReload
-	IfMsgBox, Annuler, goto, doReload
-	goto, doReload
+	goto, loop
 
 Gui2:
+	Menu, Tray, Icon, ico_time.ico
 	MsgBox , 33, Auto Shut Down, The computer will shutdown in 10 seconds if you press OK.`n`nYou can press "Cancel" to cancel. Button "ok" shutdown normally.`n`n%author% %title% %mode% %version%.`n`nThe time set is %time%.
-	if ErrorLevel, goto, loop
+		if ErrorLevel, goto, loop
 	IfMsgBox, Ok, goto, splash
-	IfMsgBox, Cancel, goto, doReload
-	IfMsgBox, Annuler, goto, doReload
-	goto, doReload
+	goto, loop
 
 ;;--- Shutdown ---
 
 	Splash:
-	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 10
+	Loop, 
+	{
+	if (BreakLoop = 1)
+	break 
+	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 10 Press " esc " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 9
+	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 9 Press " esc " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 8
+	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 8 Press " esc " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 7
+	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 7 Press " esc " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 6
+	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 6 Press " esc " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 5
+	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 5 Press " esc " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 4
+	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 4 Press " esc " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 3
+	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 3 Press " esc " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 2
+	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 2 Press " esc " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 1
+	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 1 Press " esc " to cancel
 	sleep, 1000
 	SplashTextOff
-	;; MsgBox, IS SHUTDOWN 		;; for debug purpose
+	;; MsgBox, IS SHUTDOWN 			;; for debug purpose
+	;; goto, loop 				;; for debug purpose
 	Shutdown, 5
 	goto, Exitapp
+	}
+	Esc::
+	BreakLoop = 1
+	Reload
+	Exitapp
 
-;;--- Quit (escape , esc)
+;--- Computer mode ---
+
+reboot:
+	Menu, Tray, Icon, ico_shut.ico
+	sleep, 1000
+	Shutdown, 6
+	Goto, Exitapp
+
+sessionpc:
+	Menu, Tray, Icon, Ico_Session.ico
+	sleep, 1000
+	Shutdown, 0
+	Goto, Exitapp
+
+sleeppc:
+	Menu, Tray, Icon, ico_veille.ico
+	sleep, 1000
+	DllCall("PowrProf\SetSuspendState", "int", 0, "int", 0, "int", 0)
+	Goto, Exitapp
+
+;;--- Quit (escape , esc) ---
 
 Exitapp:
 	ExitApp
@@ -285,10 +321,10 @@ secretmsgbox:
 	Return
 
 GuiLogo:
-	Gui, Add, Picture, x25 y25 w200 h200 , ico_time.ico
-	Gui, Show, w250 h250, %title% Logo
+	Gui, Add, Picture, x25 y25 w400 h400 , ico_time.ico
+	Gui, Show, w450 h450, %title% Logo
 	Gui, Color, 000000
-	goto, loop
+	return
 
 ;;--- End of script ---
 ;
