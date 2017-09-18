@@ -13,7 +13,7 @@
 
 	SetEnv, title, AutoShutDown
 	SetEnv, mode, at a time
-	SetEnv, version, Version 2017-08-18-1242
+	SetEnv, version, Version 2017-09-18-1740
 	SetEnv, Author, LostByteSoft
 
 	FileInstall, AutoShutDown.ini, AutoShutDown.ini, 0
@@ -26,6 +26,7 @@
 	FileInstall, ico_lock.ico, ico_lock.ico, 0
 	FileInstall, ico_time_w.ico, ico_time_w.ico, 0
 	FileInstall, ico_gui.ico, ico_gui.ico, 0
+	FileInstall, Ico_Session.ico, Ico_Session.ico, 0
 
 	IniRead, sunday, AutoShutDown.ini, options, sunday
 	IniRead, monday, AutoShutDown.ini, options, monday
@@ -44,6 +45,7 @@
 	IniRead, saturdayonoff, AutoShutDown.ini, options, saturdayonoff
 
 	FormatTime, today_dddd, %today%, dddd
+
 	IfEqual, today_dddd, dimanche, SetEnv, time, %sunday%
 	IfEqual, today_dddd, sunday, SetEnv, time, %sunday%
 	IfEqual, today_dddd, lundi, SetEnv, time, %monday%
@@ -65,26 +67,24 @@
 	Menu, tray, add, --= %title% =--, about1
 	Menu, Tray, Icon,  --= %title% =--, ico_time.ico
 	Menu, tray, add, Show logo, GuiLogo
+	Menu, tray, add, Secret MsgBox, secretmsgbox
+	Menu, Tray, Icon, Secret MsgBox, ico_lock.ico
+	Menu, tray, add, About %author%, secretmsgbox		; about author
+	Menu, Tray, Icon, About %author%, ico_about.ico
+	Menu, tray, add, %Version%, about3			; About version
+	Menu, Tray, Icon, %Version%, ico_about.ico
 	Menu, tray, add,
 	Menu, tray, add, Exit %title%, ExitApp			; GuiClose exit program
 	Menu, Tray, Icon, Exit %title%, ico_shut.ico
-	Menu, tray, add, Refresh (ini mod), doReload 			; Reload the script.
-	Menu, Tray, Icon, Refresh (ini mod), ico_reboot.ico, 1
-	Menu, tray, add, Show logo, GuiLogo
-	Menu, tray, add, Secret MsgBox, secretmsgbox
-	Menu, Tray, Icon, Secret MsgBox, ico_lock.ico
-	Menu, tray, add,
-	Menu, tray, add, About %author%, about2			; about author
-	Menu, Tray, Icon, About %author%, ico_about.ico
-	Menu, tray, add, %Version%, version			; About version
-	Menu, Tray, Icon, %Version%, ico_about.ico
+	Menu, tray, add, Refresh (ini mod), doReload 		; Reload the script.
+	Menu, Tray, Icon, Refresh (ini mod), ico_reboot.ico
 	Menu, tray, add,
 	Menu, tray, add, Reboot PC, Reboot
-	Menu, Tray, Icon, Reboot PC, ico_reboot.ico, 1
+	Menu, Tray, Icon, Reboot PC, ico_reboot.ico
 	Menu, tray, add, Session Close, Sessionpc
-	Menu, Tray, Icon, Session Close, Ico_Session.ico, 1
+	Menu, Tray, Icon, Session Close, Ico_Session.ico
 	Menu, tray, add, Sleep PC, Sleeppc
-	Menu, Tray, Icon, Sleep PC, ico_veille.ico, 1
+	Menu, Tray, Icon, Sleep PC, ico_veille.ico
 	Menu, tray, add,
 	Menu, tray, add, Do It Now (Shutdown), Gui
 	Menu, Tray, Icon, Do It Now (Shutdown), ico_HotKeys.ico
@@ -101,8 +101,7 @@
 loop:
 	Menu, Tray, Icon, ico_time_w.ico
 	Sleep, 5000
-	FormatTime, today_dddd, %today%, dddd
-	Sleep, 5000
+	;; FormatTime, today_dddd, %today%, dddd
 	IfEqual, today_dddd, dimanche, goto, sunday
 	IfEqual, today_dddd, sunday, goto, sunday
 	IfEqual, today_dddd, lundi, goto, monday
@@ -117,7 +116,6 @@ loop:
 	IfEqual, today_dddd, friday, goto, friday
 	IfEqual, today_dddd, samedi, goto, saturday
 	IfEqual, today_dddd, saturday, goto, saturday
-	Sleep, 5000
 	MsgBox, error detecting the day. Retry ?
 	goto, loop
 
@@ -234,29 +232,30 @@ Gui2:
 ;;--- Shutdown ---
 
 	Splash:
+	Menu, Tray, Icon, ico_shut.ico
 	Loop, 
 	{
 	if (BreakLoop = 1)
 	break 
-	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 10 Press " esc " to cancel
+	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 10 Press " Alt + A " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 9 Press " esc " to cancel
+	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 9 Press " Alt + A " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 8 Press " esc " to cancel
+	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 8 Press " Alt + A " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 7 Press " esc " to cancel
+	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 7 Press " Alt + A " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 6 Press " esc " to cancel
+	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 6 Press " Alt + A " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 5 Press " esc " to cancel
+	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 5 Press " Alt + A " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 4 Press " esc " to cancel
+	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 4 Press " Alt + A " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 3 Press " esc " to cancel
+	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 3 Press " Alt + A " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 2 Press " esc " to cancel
+	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 2 Press " Alt + A " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 1 Press " esc " to cancel
+	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 1 Press " Alt + A " to cancel
 	sleep, 1000
 	SplashTextOff
 	;; MsgBox, IS SHUTDOWN 			;; for debug purpose
@@ -264,7 +263,7 @@ Gui2:
 	Shutdown, 5
 	goto, Exitapp
 	}
-	Esc::
+	!a::
 	BreakLoop = 1
 	Reload
 	Exitapp
@@ -317,7 +316,7 @@ doReload:
 	Exitapp
 
 secretmsgbox:
-	MsgBox, a_hour=%a_hour% - A_MIN=%A_MIN% - today_dddd=%today_dddd% - time=%time% - sunday=%sunday% - monday=%monday% - tuesday=%tuesday% - wenesday=%wenesday% - thusday=%thusday% - friday=%friday% - saturday=%saturday% - sundayonoff=%sundayonoff% - mondayonoff=%mondayonoff% - tuesdayonoff=%tuesdayonoff% - wenesdayonoff=%wenesdayonoff% - thusdayonoff=%thusdayonoff% - fridayonoff=%fridayonoff% - saturdayonoff=%saturdayonoff%`n`n Now is: %a_hour%%A_MIN% %today_dddd% is set to shut %time%.
+	MsgBox, title=%title% mode=%mode% version=%version%`n`na_hour=%a_hour% - A_MIN=%A_MIN% - today_dddd=%today_dddd% - time=%time%`n`nsunday=%sunday% - monday=%monday% - tuesday=%tuesday% - wenesday=%wenesday% - thusday=%thusday% - friday=%friday% - saturday=%saturday%`n`nsundayonoff=%sundayonoff% mondayonoff=%mondayonoff% - tuesdayonoff=%tuesdayonoff% - wenesdayonoff=%wenesdayonoff% - thusdayonoff=%thusdayonoff% - fridayonoff=%fridayonoff% - saturdayonoff=%saturdayonoff%`n`n Now is: %a_hour%%A_MIN% %today_dddd% is set to shut %time%.
 	Return
 
 GuiLogo:
