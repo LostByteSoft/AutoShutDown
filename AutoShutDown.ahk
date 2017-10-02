@@ -13,8 +13,10 @@
 
 	SetEnv, title, AutoShutDown
 	SetEnv, mode, at a time
-	SetEnv, version, Version 2017-09-18-1740
+	SetEnv, version, Version 2017-10-02-1050
 	SetEnv, Author, LostByteSoft
+	SetEnv, pause, 0
+	SetEnv, logoicon, ico_time.ico
 
 	FileInstall, AutoShutDown.ini, AutoShutDown.ini, 0
 	FileInstall, ico_time.ico, ico_time.ico, 0
@@ -27,6 +29,8 @@
 	FileInstall, ico_time_w.ico, ico_time_w.ico, 0
 	FileInstall, ico_gui.ico, ico_gui.ico, 0
 	FileInstall, Ico_Session.ico, Ico_Session.ico, 0
+	FileInstall, ico_pause.ico, ico_pause.ico, 0
+	FileInstall, ico_veille.ico, ico_veille.ico, 0
 
 	IniRead, sunday, AutoShutDown.ini, options, sunday
 	IniRead, monday, AutoShutDown.ini, options, monday
@@ -64,21 +68,34 @@
 ;;--- Menu Tray options ---
 
 	Menu, Tray, NoStandard
-	Menu, tray, add, --= %title% =--, about1
-	Menu, Tray, Icon,  --= %title% =--, ico_time.ico
+	Menu, tray, add, ---=== %title% ===---, about
+	Menu, Tray, Icon, ---=== %title% ===---, %logoicon%
 	Menu, tray, add, Show logo, GuiLogo
-	Menu, tray, add, Secret MsgBox, secretmsgbox
+	Menu, tray, add, Secret MsgBox, secret			; Secret MsgBox, just show all options and variables of the program
 	Menu, Tray, Icon, Secret MsgBox, ico_lock.ico
-	Menu, tray, add, About %author%, secretmsgbox		; about author
-	Menu, Tray, Icon, About %author%, ico_about.ico
-	Menu, tray, add, %Version%, about3			; About version
-	Menu, Tray, Icon, %Version%, ico_about.ico
+	Menu, tray, add, About && ReadMe, author
+	Menu, Tray, Icon, About && ReadMe, ico_about.ico
+	Menu, tray, add, Author %author%, about
+	menu, tray, disable, Author %author%
+	Menu, tray, add, %version%, about
+	menu, tray, disable, %version%
 	Menu, tray, add,
-	Menu, tray, add, Exit %title%, ExitApp			; GuiClose exit program
-	Menu, Tray, Icon, Exit %title%, ico_shut.ico
+	Menu, tray, add, Exit, Close				; Close exit program
+	Menu, Tray, Icon, Exit, ico_shut.ico
 	Menu, tray, add, Refresh (ini mod), doReload 		; Reload the script.
 	Menu, Tray, Icon, Refresh (ini mod), ico_reboot.ico
 	Menu, tray, add,
+	Menu, tray, add, --= Options =--, about
+	Menu, Tray, Icon, --= Options =--, ico_options.ico
+	Menu, tray, add, Options AutoShutDown.ini, options
+	Menu, Tray, Icon, Options AutoShutDown.ini, ico_options.ico
+	Menu, tray, add, Show Gui, Gui2
+	Menu, Tray, Icon, Show Gui, ico_gui.ico
+	Menu, tray, add, Pause (Toggle), pause
+	Menu, Tray, Icon, Pause (Toggle), ico_pause.ico
+	Menu, tray, add,
+	Menu, tray, add, Do It Now (Shutdown), Gui
+	Menu, Tray, Icon, Do It Now (Shutdown), ico_HotKeys.ico
 	Menu, tray, add, Reboot PC, Reboot
 	Menu, Tray, Icon, Reboot PC, ico_reboot.ico
 	Menu, tray, add, Session Close, Sessionpc
@@ -86,20 +103,14 @@
 	Menu, tray, add, Sleep PC, Sleeppc
 	Menu, Tray, Icon, Sleep PC, ico_veille.ico
 	Menu, tray, add,
-	Menu, tray, add, Do It Now (Shutdown), Gui
-	Menu, Tray, Icon, Do It Now (Shutdown), ico_HotKeys.ico
-	Menu, tray, add,
-	Menu, tray, add, Options AutoShutDown.ini, options
-	Menu, Tray, Icon, Options AutoShutDown.ini, ico_options.ico
-	Menu, tray, add, Show Gui, Gui2
-	Menu, Tray, Icon, Show Gui, ico_gui.ico
-	Menu, tray, add,
 	Menu, Tray, Tip, %title% - Shut at %time% H
 
 ;;--- Software start here ---
 
 loop:
+	IfEqual, pause, 1, Goto, skipicon
 	Menu, Tray, Icon, ico_time_w.ico
+	skipicon:
 	Sleep, 5000
 	;; FormatTime, today_dddd, %today%, dddd
 	IfEqual, today_dddd, dimanche, goto, sunday
@@ -116,8 +127,7 @@ loop:
 	IfEqual, today_dddd, friday, goto, friday
 	IfEqual, today_dddd, samedi, goto, saturday
 	IfEqual, today_dddd, saturday, goto, saturday
-	MsgBox, error detecting the day. Retry ?
-	goto, loop
+	Goto, error
 
 ;;--- Days of the week ---
 
@@ -212,9 +222,36 @@ saturday:
 	Sleep, 55000
 	Goto, gui
 
+pause:
+	Ifequal, pause, 0, goto, paused
+	Ifequal, pause, 1, goto, unpaused
+	Goto, error
+
+	paused:
+	Menu, Tray, Icon, ico_pause.ico
+	SetEnv, pause, 1
+	goto, loop
+
+	unpaused:	
+	Menu, Tray, Icon, ico_time_w.ico
+	SetEnv, pause, 0
+	Goto, loop
+
+inpause:
+	Menu, Tray, Icon, ico_pause.ico
+	sleep, 240000
+	Goto, inpause
+
+error:
+	Random, error, 1111, 9999
+	MsgBox, 16, %title%, Error %error%
+	Sleep, 500
+	Goto, loop
+
 ;;--- Shutdown ---
 
 Gui:
+	Ifequal, pause, 1, goto, inpause
 	Menu, Tray, Icon, ico_time.ico
 	MsgBox , 33, Auto Shut Down, The computer will shutdown in 20 seconds. This message have a 10 seconds timeout.`n`nYou can press "Cancel" to cancel. Button "ok" shutdown normally.`n`n%author% %title% %mode% %version%.`n`nThe time set is %time%., 10
 		if ErrorLevel, goto, loop
@@ -239,23 +276,23 @@ Gui2:
 	break 
 	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 10 Press " Alt + A " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 9 Press " Alt + A " to cancel
+	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 09 Press " Alt + A " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 8 Press " Alt + A " to cancel
+	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 08 Press " Alt + A " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 7 Press " Alt + A " to cancel
+	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 07 Press " Alt + A " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 6 Press " Alt + A " to cancel
+	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 06 Press " Alt + A " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 5 Press " Alt + A " to cancel
+	SplashTextOn, 300, 75, Shutdown Computer, Shutdown in: 05 Press " Alt + A " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 4 Press " Alt + A " to cancel
+	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 04 Press " Alt + A " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 3 Press " Alt + A " to cancel
+	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 03 Press " Alt + A " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 2 Press " Alt + A " to cancel
+	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 02 Press " Alt + A " to cancel
 	sleep, 1000
-	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 1 Press " Alt + A " to cancel
+	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 01 Press " Alt + A " to cancel
 	sleep, 1000
 	SplashTextOff
 	;; MsgBox, IS SHUTDOWN 			;; for debug purpose
@@ -290,7 +327,15 @@ sleeppc:
 
 ;;--- Quit (escape , esc) ---
 
+close:
 Exitapp:
+	ExitApp
+
+doReload:
+	Reload
+	Exitapp
+
+; Escape::		; Debug purpose
 	ExitApp
 
 ;;--- Tray Bar (must be at end of file) ---
@@ -300,10 +345,7 @@ options:
 	Sleep, 2000
 	Return
 
-about1:
-about2:
-about3:
-about4:
+about:
 	TrayTip, %title%, ShutDown at time %Author%, 2, 2
 	Return
 
@@ -311,16 +353,17 @@ Version:
 	TrayTip, %title%, %version%, 2, 2
 	Return
 
-doReload:
-	Reload
-	Exitapp
+author:
+	MsgBox, 64, %title%, %title% %mode% %version% %author%.`n`n`tGo to https://github.com/LostByteSoft
+	Return
 
-secretmsgbox:
-	MsgBox, title=%title% mode=%mode% version=%version%`n`na_hour=%a_hour% - A_MIN=%A_MIN% - today_dddd=%today_dddd% - time=%time%`n`nsunday=%sunday% - monday=%monday% - tuesday=%tuesday% - wenesday=%wenesday% - thusday=%thusday% - friday=%friday% - saturday=%saturday%`n`nsundayonoff=%sundayonoff% mondayonoff=%mondayonoff% - tuesdayonoff=%tuesdayonoff% - wenesdayonoff=%wenesdayonoff% - thusdayonoff=%thusdayonoff% - fridayonoff=%fridayonoff% - saturdayonoff=%saturdayonoff%`n`n Now is: %a_hour%%A_MIN% %today_dddd% is set to shut %time%.
+secret:
+	msgbox, 49, title=%title% mode=%mode% version=%version%`n`na_hour=%a_hour% - A_MIN=%A_MIN% - today_dddd=%today_dddd% - time=%time%`n`nsunday=%sunday% - monday=%monday% - tuesday=%tuesday% - wenesday=%wenesday% - thusday=%thusday% - friday=%friday% - saturday=%saturday%`n`nsundayonoff=%sundayonoff% mondayonoff=%mondayonoff% - tuesdayonoff=%tuesdayonoff% - wenesdayonoff=%wenesdayonoff% - thusdayonoff=%thusdayonoff% - fridayonoff=%fridayonoff% - saturdayonoff=%saturdayonoff%`n`n Now is: %a_hour%%A_MIN% %today_dddd% is set to shut %time%.
+		
 	Return
 
 GuiLogo:
-	Gui, Add, Picture, x25 y25 w400 h400 , ico_time.ico
+	Gui, Add, Picture, x25 y25 w400 h400 , %logoicon%
 	Gui, Show, w450 h450, %title% Logo
 	Gui, Color, 000000
 	return
