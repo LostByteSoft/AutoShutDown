@@ -13,10 +13,11 @@
 
 	SetEnv, title, AutoShutDown
 	SetEnv, mode, at a time
-	SetEnv, version, Version 2017-10-14-0910
+	SetEnv, version, Version 2017-10-15-0859
 	SetEnv, Author, LostByteSoft
 	SetEnv, pause, 0
 	SetEnv, logoicon, ico_time.ico
+	SetEnv, debug, 0
 
 	FileInstall, AutoShutDown.ini, AutoShutDown.ini, 0
 	FileInstall, ico_time.ico, ico_time.ico, 0
@@ -84,6 +85,7 @@
 	Menu, Tray, Icon, Exit, ico_shut.ico
 	Menu, tray, add, Refresh (ini mod), doReload 		; Reload the script.
 	Menu, Tray, Icon, Refresh (ini mod), ico_reboot.ico
+	Menu, tray, add, Debug (Toggle), debug
 	Menu, tray, add,
 	Menu, tray, add, Do It Now (Shutdown), Gui
 	Menu, Tray, Icon, Do It Now (Shutdown), ico_HotKeys.ico
@@ -248,6 +250,16 @@ error:
 	Sleep, 500
 	Goto, loop
 
+Debug:
+	IfEqual, debug, 0, goto, enable
+	IfEqual, debug, 1, goto, disable
+	enable:
+	SetEnv, debug, 1
+	Goto, loop
+	disable:
+	SetEnv, debug, 0
+	Goto, loop
+
 ;;--- Shutdown ---
 
 Gui:						; Gui form script to shutdown, have a timeout
@@ -258,6 +270,7 @@ Gui:						; Gui form script to shutdown, have a timeout
 		if ErrorLevel, goto, loop
 	IfMsgBox, TIMEOUT, goto, splash
 	IfMsgBox, Ok, goto, splash
+	IfMsgBox, CANCEL, goto, sleep
 	WinMinimizeAllUndo
 	goto, loop
 
@@ -267,7 +280,15 @@ Gui2:						; Gui from tray
 	MsgBox , 33, Auto Shut Down, The computer will shutdown in 10 seconds if you press OK.`n`nYou can press "Cancel" to cancel. Button "ok" shutdown normally.`n`n%author% %title% %mode% %version%.`n`nThe time set is %time%.
 		if ErrorLevel, goto, loop
 	IfMsgBox, Ok, goto, splash
+	IfMsgBox, CANCEL, goto, sleep
 	WinMinimizeAllUndo
+	goto, loop
+
+sleep:
+	WinMinimizeAllUndo
+	Menu, Tray, Icon, ico_time_w.ico
+	IfEqual, debug, 1, MsgBox, I'm sleeping for 2 min.
+	sleep, 120000			; sleep for 2 min after cancel is pressed.
 	goto, loop
 
 ;;--- Shutdown ---
@@ -299,8 +320,8 @@ Gui2:						; Gui from tray
 	SplashTextOn, 300, 75, shutdown Computer, Shutdown in: 01 Press " Alt + A " to cancel
 	sleep, 1000
 	SplashTextOff
-	;; MsgBox, IS SHUTDOWN 			;; for debug purpose
-	;; goto, loop 				;; for debug purpose
+	IfEqual, debug, 1, MsgBox, !!! IS SHUTDOWN !!! You are in debug mode, return to loop. (No shutdown) 	;; for debug purpose
+	IfEqual, debug, 1, goto, loop 										;; for debug purpose
 	Shutdown, 5
 	goto, Exitapp
 	}
@@ -362,7 +383,7 @@ author:
 	Return
 
 secret:
-	msgbox, 49, title=%title% mode=%mode% version=%version%`n`na_hour=%a_hour% - A_MIN=%A_MIN% - today_dddd=%today_dddd% - time=%time%`n`nsunday=%sunday% - monday=%monday% - tuesday=%tuesday% - wenesday=%wenesday% - thusday=%thusday% - friday=%friday% - saturday=%saturday%`n`nsundayonoff=%sundayonoff% mondayonoff=%mondayonoff% - tuesdayonoff=%tuesdayonoff% - wenesdayonoff=%wenesdayonoff% - thusdayonoff=%thusdayonoff% - fridayonoff=%fridayonoff% - saturdayonoff=%saturdayonoff%`n`n Now is: %a_hour%%A_MIN% %today_dddd% is set to shut %time%.
+	msgbox, 49, %title%, title=%title% mode=%mode% version=%version%`n`na_hour=%a_hour% - A_MIN=%A_MIN% - today_dddd=%today_dddd% - time=%time%`n`nsunday=%sunday% - monday=%monday% - tuesday=%tuesday% - wenesday=%wenesday% - thusday=%thusday% - friday=%friday% - saturday=%saturday%`n`nsundayonoff=%sundayonoff% mondayonoff=%mondayonoff% - tuesdayonoff=%tuesdayonoff% - wenesdayonoff=%wenesdayonoff% - thusdayonoff=%thusdayonoff% - fridayonoff=%fridayonoff% - saturdayonoff=%saturdayonoff%`n`n Now is: %a_hour%%A_MIN% %today_dddd% is set to shut %time%.
 		
 	Return
 
