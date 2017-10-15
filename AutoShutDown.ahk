@@ -7,13 +7,13 @@
 ;;--- Softwares var options files ---
 
 	#NoEnv
-	#SingleInstance Force
+	; #SingleInstance Force , New revision permit to shutdown at 2 hours of the same day, must be disable.
 	#Persistent
 	SetWorkingDir, %A_ScriptDir%
 
 	SetEnv, title, AutoShutDown
 	SetEnv, mode, at a time
-	SetEnv, version, Version 2017-10-02-1050
+	SetEnv, version, Version 2017-10-14-0910
 	SetEnv, Author, LostByteSoft
 	SetEnv, pause, 0
 	SetEnv, logoicon, ico_time.ico
@@ -71,7 +71,7 @@
 	Menu, tray, add, ---=== %title% ===---, about
 	Menu, Tray, Icon, ---=== %title% ===---, %logoicon%
 	Menu, tray, add, Show logo, GuiLogo
-	Menu, tray, add, Secret MsgBox, secret			; Secret MsgBox, just show all options and variables of the program
+	Menu, tray, add, Secret MsgBox, secret					; Secret MsgBox, just show all options and variables of the program
 	Menu, Tray, Icon, Secret MsgBox, ico_lock.ico
 	Menu, tray, add, About && ReadMe, author
 	Menu, Tray, Icon, About && ReadMe, ico_about.ico
@@ -85,15 +85,6 @@
 	Menu, tray, add, Refresh (ini mod), doReload 		; Reload the script.
 	Menu, Tray, Icon, Refresh (ini mod), ico_reboot.ico
 	Menu, tray, add,
-	Menu, tray, add, --= Options =--, about
-	Menu, Tray, Icon, --= Options =--, ico_options.ico
-	Menu, tray, add, Options AutoShutDown.ini, options
-	Menu, Tray, Icon, Options AutoShutDown.ini, ico_options.ico
-	Menu, tray, add, Show Gui, Gui2
-	Menu, Tray, Icon, Show Gui, ico_gui.ico
-	Menu, tray, add, Pause (Toggle), pause
-	Menu, Tray, Icon, Pause (Toggle), ico_pause.ico
-	Menu, tray, add,
 	Menu, tray, add, Do It Now (Shutdown), Gui
 	Menu, Tray, Icon, Do It Now (Shutdown), ico_HotKeys.ico
 	Menu, tray, add, Reboot PC, Reboot
@@ -102,6 +93,15 @@
 	Menu, Tray, Icon, Session Close, Ico_Session.ico
 	Menu, tray, add, Sleep PC, Sleeppc
 	Menu, Tray, Icon, Sleep PC, ico_veille.ico
+	Menu, tray, add,
+	Menu, tray, add, --= Options =--, about
+	Menu, Tray, Icon, --= Options =--, ico_options.ico
+	Menu, tray, add, Options AutoShutDown.ini, options
+	Menu, Tray, Icon, Options AutoShutDown.ini, ico_options.ico
+	Menu, tray, add, Show Gui, Gui2
+	Menu, Tray, Icon, Show Gui, ico_gui.ico
+	Menu, tray, add, Pause (Toggle), pause
+	Menu, Tray, Icon, Pause (Toggle), ico_pause.ico
 	Menu, tray, add,
 	Menu, Tray, Tip, %title% - Shut at %time% H
 
@@ -141,7 +141,7 @@ sunday:
 
 	shutsun:
 	IfEqual, sundayonoff, 0, goto, loop
-	Sleep, 55000
+	Sleep, 5000
 	Goto, gui
 
 monday:
@@ -154,7 +154,7 @@ monday:
 
 	shutmon:
 	IfEqual, mondayonoff, 0, goto, loop
-	Sleep, 55000
+	Sleep, 5000
 	Goto, gui
 
 tuesday:
@@ -167,7 +167,7 @@ tuesday:
 
 	shuttue:
 	IfEqual, tuesdayonoff, 0, goto, loop
-	Sleep, 55000
+	Sleep, 5000
 	Goto, gui
 
 wenesday:
@@ -180,7 +180,7 @@ wenesday:
 
 	shutwen:
 	IfEqual, wenesdayonoff, 0, goto, loop
-	Sleep, 55000
+	Sleep, 5000
 	Goto, gui
 
 thusday:
@@ -193,7 +193,7 @@ thusday:
 
 	shutthu:
 	IfEqual, wenesdayonoff, 0, goto, loop
-	Sleep, 55000
+	Sleep, 5000
 	Goto, gui
 
 friday:
@@ -206,7 +206,7 @@ friday:
 
 	shutfri:
 	IfEqual, fridayonoff, 0, goto, loop
-	Sleep, 55000
+	Sleep, 5000
 	Goto, gui
 
 saturday:
@@ -219,7 +219,7 @@ saturday:
 
 	shutsat:
 	IfEqual, saturdayonoff, 0, goto, loop
-	Sleep, 55000
+	Sleep, 5000
 	Goto, gui
 
 pause:
@@ -250,20 +250,24 @@ error:
 
 ;;--- Shutdown ---
 
-Gui:
+Gui:						; Gui form script to shutdown, have a timeout
 	Ifequal, pause, 1, goto, inpause
 	Menu, Tray, Icon, ico_time.ico
+	WinMinimizeAll
 	MsgBox , 33, Auto Shut Down, The computer will shutdown in 20 seconds. This message have a 10 seconds timeout.`n`nYou can press "Cancel" to cancel. Button "ok" shutdown normally.`n`n%author% %title% %mode% %version%.`n`nThe time set is %time%., 10
 		if ErrorLevel, goto, loop
 	IfMsgBox, TIMEOUT, goto, splash
 	IfMsgBox, Ok, goto, splash
+	WinMinimizeAllUndo
 	goto, loop
 
-Gui2:
+Gui2:						; Gui from tray
 	Menu, Tray, Icon, ico_time.ico
+	WinMinimizeAll
 	MsgBox , 33, Auto Shut Down, The computer will shutdown in 10 seconds if you press OK.`n`nYou can press "Cancel" to cancel. Button "ok" shutdown normally.`n`n%author% %title% %mode% %version%.`n`nThe time set is %time%.
 		if ErrorLevel, goto, loop
 	IfMsgBox, Ok, goto, splash
+	WinMinimizeAllUndo
 	goto, loop
 
 ;;--- Shutdown ---
@@ -354,7 +358,7 @@ Version:
 	Return
 
 author:
-	MsgBox, 64, %title%, %title% %mode% %version% %author%.`n`n`tGo to https://github.com/LostByteSoft
+	MsgBox, 64, %title%, %title% %mode% %version% %author%. This software is usefull for shutdown a computer automaticly.`n`n`tGo to https://github.com/LostByteSoft
 	Return
 
 secret:
