@@ -13,25 +13,32 @@
 
 	SetEnv, title, AutoShutDown
 	SetEnv, mode, at a time
-	SetEnv, version, Version 2017-10-15-0859
+	SetEnv, version, Version 2017-11-25-1331
 	SetEnv, Author, LostByteSoft
 	SetEnv, pause, 0
+	SetEnv, icofolder, C:\Program Files\Common Files
 	SetEnv, logoicon, ico_time.ico
 	SetEnv, debug, 0
 
+	;; specific files
+
 	FileInstall, AutoShutDown.ini, AutoShutDown.ini, 0
-	FileInstall, ico_time.ico, ico_time.ico, 0
-	FileInstall, ico_about.ico, ico_about.ico, 0
-	FileInstall, ico_shut.ico, ico_shut.ico, 0
-	FileInstall, ico_reboot.ico, ico_reboot.ico, 0
-	FileInstall, ico_HotKeys.ico, ico_HotKeys.ico, 0
-	FileInstall, ico_options.ico, ico_options.ico, 0
-	FileInstall, ico_lock.ico, ico_lock.ico, 0
-	FileInstall, ico_time_w.ico, ico_time_w.ico, 0
-	FileInstall, ico_gui.ico, ico_gui.ico, 0
-	FileInstall, Ico_Session.ico, Ico_Session.ico, 0
-	FileInstall, ico_pause.ico, ico_pause.ico, 0
-	FileInstall, ico_veille.ico, ico_veille.ico, 0
+	FileInstall, ico_time.ico, %icofolder%\ico_time.ico, 0
+	FileInstall, ico_time_w.ico, %icofolder%\ico_time_w.ico, 0
+	FileInstall, ico_Session.ico, %icofolder%\ico_Session.ico, 0
+	FileInstall, ico_veille.ico, %icofolder%\ico_veille.ico, 0
+
+	;; Common ico
+
+	FileInstall, ico_about.ico, %icofolder%\ico_about.ico, 0
+	FileInstall, ico_lock.ico, %icofolder%\ico_lock.ico, 0
+	FileInstall, ico_shut.ico, %icofolder%\ico_shut.ico, 0
+	FileInstall, ico_options.ico, %icofolder%\ico_options.ico, 0
+	FileInstall, ico_reboot.ico, %icofolder%\ico_reboot.ico, 0
+	FileInstall, ico_shut.ico, %icofolder%\ico_shut.ico, 0
+	FileInstall, ico_HotKeys.ico, %icofolder%\ico_HotKeys.ico, 0
+	FileInstall, ico_pause.ico, %icofolder%\ico_pause.ico, 0
+	FileInstall, ico_debug.ico, %icofolder%\ico_debug.ico, 0
 
 	IniRead, sunday, AutoShutDown.ini, options, sunday
 	IniRead, monday, AutoShutDown.ini, options, monday
@@ -70,40 +77,42 @@
 
 	Menu, Tray, NoStandard
 	Menu, tray, add, ---=== %title% ===---, about
-	Menu, Tray, Icon, ---=== %title% ===---, %logoicon%
+	Menu, Tray, Icon, ---=== %title% ===---, %icofolder%\%logoicon%
 	Menu, tray, add, Show logo, GuiLogo
 	Menu, tray, add, Secret MsgBox, secret					; Secret MsgBox, just show all options and variables of the program
-	Menu, Tray, Icon, Secret MsgBox, ico_lock.ico
+	Menu, Tray, Icon, Secret MsgBox, %icofolder%\ico_lock.ico
 	Menu, tray, add, About && ReadMe, author
-	Menu, Tray, Icon, About && ReadMe, ico_about.ico
+	Menu, Tray, Icon, About && ReadMe, %icofolder%\ico_about.ico
 	Menu, tray, add, Author %author%, about
 	menu, tray, disable, Author %author%
 	Menu, tray, add, %version%, about
 	menu, tray, disable, %version%
 	Menu, tray, add,
-	Menu, tray, add, Exit, Close				; Close exit program
-	Menu, Tray, Icon, Exit, ico_shut.ico
+	Menu, tray, add, --== Control ==--, about
+	Menu, Tray, Icon, --== Control ==--, %icofolder%\ico_options.ico
+	Menu, tray, add, Exit %title%, Close				; Close exit program
+	Menu, Tray, Icon, Exit %title%, %icofolder%\ico_shut.ico
 	Menu, tray, add, Refresh (ini mod), doReload 		; Reload the script.
-	Menu, Tray, Icon, Refresh (ini mod), ico_reboot.ico
-	Menu, tray, add, Debug (Toggle), debug
+	Menu, Tray, Icon, Refresh (ini mod), %icofolder%\ico_reboot.ico
+	Menu, tray, add, Set Debug (Toggle), debug
+	Menu, Tray, Icon, Set Debug (Toggle), %icofolder%\ico_debug.ico
+	Menu, tray, add, Pause (Toggle), pause
+	Menu, Tray, Icon, Pause (Toggle), %icofolder%\ico_pause.ico
 	Menu, tray, add,
 	Menu, tray, add, Do It Now (Shutdown), Gui
-	Menu, Tray, Icon, Do It Now (Shutdown), ico_HotKeys.ico
+	Menu, Tray, Icon, Do It Now (Shutdown), %icofolder%\ico_HotKeys.ico
 	Menu, tray, add, Reboot PC, Reboot
-	Menu, Tray, Icon, Reboot PC, ico_reboot.ico
+	Menu, Tray, Icon, Reboot PC, %icofolder%\ico_reboot.ico
 	Menu, tray, add, Session Close, Sessionpc
-	Menu, Tray, Icon, Session Close, Ico_Session.ico
+	Menu, Tray, Icon, Session Close, %icofolder%\ico_Session.ico
 	Menu, tray, add, Sleep PC, Sleeppc
-	Menu, Tray, Icon, Sleep PC, ico_veille.ico
+	Menu, Tray, Icon, Sleep PC, %icofolder%\ico_veille.ico
 	Menu, tray, add,
-	Menu, tray, add, --= Options =--, about
-	Menu, Tray, Icon, --= Options =--, ico_options.ico
+	Menu, tray, add, --== Options ==--, about
+	Menu, Tray, Icon, --== Options ==--, %icofolder%\ico_options.ico
 	Menu, tray, add, Options AutoShutDown.ini, options
-	Menu, Tray, Icon, Options AutoShutDown.ini, ico_options.ico
+	Menu, tray, add,
 	Menu, tray, add, Show Gui, Gui2
-	Menu, Tray, Icon, Show Gui, ico_gui.ico
-	Menu, tray, add, Pause (Toggle), pause
-	Menu, Tray, Icon, Pause (Toggle), ico_pause.ico
 	Menu, tray, add,
 	Menu, Tray, Tip, %title% - Shut at %time% H
 
@@ -111,7 +120,7 @@
 
 loop:
 	IfEqual, pause, 1, Goto, skipicon
-	Menu, Tray, Icon, ico_time_w.ico
+	Menu, Tray, Icon, %icofolder%\ico_time_w.ico
 	skipicon:
 	Sleep, 5000
 	;; FormatTime, today_dddd, %today%, dddd
@@ -230,17 +239,17 @@ pause:
 	Goto, error
 
 	paused:
-	Menu, Tray, Icon, ico_pause.ico
+	Menu, Tray, Icon, %icofolder%\ico_pause.ico
 	SetEnv, pause, 1
 	goto, loop
 
 	unpaused:	
-	Menu, Tray, Icon, ico_time_w.ico
+	Menu, Tray, Icon, %icofolder%\ico_time_w.ico
 	SetEnv, pause, 0
 	Goto, loop
 
 inpause:
-	Menu, Tray, Icon, ico_pause.ico
+	Menu, Tray, Icon, %icofolder%\ico_pause.ico
 	sleep, 240000
 	Goto, inpause
 
@@ -255,16 +264,18 @@ Debug:
 	IfEqual, debug, 1, goto, disable
 	enable:
 	SetEnv, debug, 1
+	MsgBox, Debug set 1
 	Goto, loop
 	disable:
 	SetEnv, debug, 0
+	MsgBox, Debug set 0
 	Goto, loop
 
 ;;--- Shutdown ---
 
 Gui:						; Gui form script to shutdown, have a timeout
-	Ifequal, pause, 1, goto, inpause
-	Menu, Tray, Icon, ico_time.ico
+	Ifequal, pause, 1, goto, sleep
+	Menu, Tray, Icon, %icofolder%\ico_time.ico
 	WinMinimizeAll
 	MsgBox , 33, Auto Shut Down, The computer will shutdown in 20 seconds. This message have a 10 seconds timeout.`n`nYou can press "Cancel" to cancel. Button "ok" shutdown normally.`n`n%author% %title% %mode% %version%.`n`nThe time set is %time%., 10
 		if ErrorLevel, goto, loop
@@ -275,7 +286,7 @@ Gui:						; Gui form script to shutdown, have a timeout
 	goto, loop
 
 Gui2:						; Gui from tray
-	Menu, Tray, Icon, ico_time.ico
+	Menu, Tray, Icon, %icofolder%\ico_time.ico
 	WinMinimizeAll
 	MsgBox , 33, Auto Shut Down, The computer will shutdown in 10 seconds if you press OK.`n`nYou can press "Cancel" to cancel. Button "ok" shutdown normally.`n`n%author% %title% %mode% %version%.`n`nThe time set is %time%.
 		if ErrorLevel, goto, loop
@@ -286,15 +297,16 @@ Gui2:						; Gui from tray
 
 sleep:
 	WinMinimizeAllUndo
-	Menu, Tray, Icon, ico_time_w.ico
+	sleep, 500
+	Menu, Tray, Icon, %icofolder%\ico_pause.ico
 	IfEqual, debug, 1, MsgBox, I'm sleeping for 2 min.
-	sleep, 120000			; sleep for 2 min after cancel is pressed.
+	sleep, 125000			; sleep for 2 min after cancel is pressed.
 	goto, loop
 
 ;;--- Shutdown ---
 
 	Splash:
-	Menu, Tray, Icon, ico_shut.ico
+	Menu, Tray, Icon, %icofolder%\ico_shut.ico
 	Loop, 
 	{
 	if (BreakLoop = 1)
@@ -327,25 +339,26 @@ sleep:
 	}
 	!a::
 	BreakLoop = 1
+	WinMinimizeAllUndo
 	Reload
 	Exitapp
 
 ;--- Computer mode ---
 
 reboot:
-	Menu, Tray, Icon, ico_shut.ico
+	Menu, Tray, Icon, %icofolder%\ico_shut.ico
 	sleep, 1000
 	Shutdown, 6
 	Goto, Exitapp
 
 sessionpc:
-	Menu, Tray, Icon, Ico_Session.ico
+	Menu, Tray, Icon, %icofolder%\ico_Session.ico
 	sleep, 1000
 	Shutdown, 0
 	Goto, Exitapp
 
 sleeppc:
-	Menu, Tray, Icon, ico_veille.ico
+	Menu, Tray, Icon, %icofolder%\ico_veille.ico
 	sleep, 1000
 	DllCall("PowrProf\SetSuspendState", "int", 0, "int", 0, "int", 0)
 	Goto, Exitapp
@@ -359,9 +372,6 @@ Exitapp:
 doReload:
 	Reload
 	Exitapp
-
-; Escape::		; Debug purpose
-	ExitApp
 
 ;;--- Tray Bar (must be at end of file) ---
 
@@ -383,14 +393,18 @@ author:
 	Return
 
 secret:
-	msgbox, 49, %title%, title=%title% mode=%mode% version=%version%`n`na_hour=%a_hour% - A_MIN=%A_MIN% - today_dddd=%today_dddd% - time=%time%`n`nsunday=%sunday% - monday=%monday% - tuesday=%tuesday% - wenesday=%wenesday% - thusday=%thusday% - friday=%friday% - saturday=%saturday%`n`nsundayonoff=%sundayonoff% mondayonoff=%mondayonoff% - tuesdayonoff=%tuesdayonoff% - wenesdayonoff=%wenesdayonoff% - thusdayonoff=%thusdayonoff% - fridayonoff=%fridayonoff% - saturdayonoff=%saturdayonoff%`n`n Now is: %a_hour%%A_MIN% %today_dddd% is set to shut %time%.
-		
+	msgbox, 49, %title%, title=%title% mode=%mode% version=%version% author=%author% debug=%debug%`n`na_hour=%a_hour% - A_MIN=%A_MIN% - today_dddd=%today_dddd% - time=%time%`n`nsunday=%sunday% - monday=%monday% - tuesday=%tuesday% - wenesday=%wenesday% - thusday=%thusday% - friday=%friday% - saturday=%saturday%`n`nsundayonoff=%sundayonoff% mondayonoff=%mondayonoff% - tuesdayonoff=%tuesdayonoff% - wenesdayonoff=%wenesdayonoff% - thusdayonoff=%thusdayonoff% - fridayonoff=%fridayonoff% - saturdayonoff=%saturdayonoff%`n`n Now is: %a_hour%%A_MIN% %today_dddd% is set to shut %time%.
 	Return
 
 GuiLogo:
-	Gui, Add, Picture, x25 y25 w400 h400 , %logoicon%
-	Gui, Show, w450 h450, %title% Logo
-	Gui, Color, 000000
+	Gui, 4:Add, Picture, x25 y25 w400 h400, %icofolder%\%logoicon%
+	Gui, 4:Show, w450 h450, %title% Logo
+	;;Gui, 4:Color, 000000
+	Sleep, 500
+	Return
+
+	4GuiClose:
+	Gui 4:Cancel
 	return
 
 ;;--- End of script ---
